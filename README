@@ -1,0 +1,42 @@
+av8nwx - an experimental Twitterbot for aviation text weather
+
+av8nwx iconav8nwx is an experimental Twitter bot that I'm playing with to see how I can use the Twitter API in some interesting ways. The idea behind av8nwx is that you can send simple direct messages (DMs) to @av8nwx and it will return to you various text based aviation weather information.
+
+Gratuitous Warning: This is an experimental service, av8nwx is not an approved source of aviation weather, please do not rely on this information in your flight planning process!
+Here's how to set it up:
+
+   1. Assuming you are on Twitter, first you follow @av8nwx
+   2. Then send a tweet out to @av8nwx with getwx as the message
+   3. In a few seconds the bot will receive the tweet, follow you and send you a DM confirming everything is set up
+   4. that's it!
+
+Once everyone is friendly, then you can use DM from that point onwards. In theory this friending process isn't really necessary but it would put a lot of less relevant content onto the main timeline so DM seems the best approach for now.
+What can you do now?
+Get METAR reports
+
+Send a DM to @av8nwx with the content metar <station_code> where <station-code> should be replaced by the ICAO code for the airport you are interested in. Here are some examples:
+
+    * metar kord
+    * metar klax
+    * metar klga
+
+The bot will check its messages every few seconds and then go out and get the METAR for that station and return it to you via DM.
+Get TAF reports
+
+Send a DM to @av8nwx with the content taf <station_code> where <station-code> should be replaced by the ICAO code for the airport you are interested in. Here are some examples:
+
+    * taf kord
+    * taf klax
+    * taf klga
+
+As you might expect, these will return the current TAFs for these airports (if available). TAFs have the potential to be longer that 140 characters and at the moment its just going to truncate it. Not really ideal but that's what it does for now.
+How does it work?
+
+I'm using the Ruby twibot library to monitor the @av8nwx twitter account and then act on the messages and @replies that come in. It parses the message content and then makes a call to the ADDS TAF or  METAR pages to get the appropriate weather information. I'm using Hpricot to parse the ADDS HTML results (wish there was a REST API for metars, etc.) and returning just the text weather information via the direct message.
+
+What next?
+
+    * Syntax needs to improve, typing 'taf' can be a pain on the iPhone, so there's no reason why it shouldn't just be 't' or 'm' for TAF and METAR.
+    * Request multiple station reports in one DM. The results would probably have to come back in multiple DMs to stay under 140 characters.
+    * Handle reports longer than 140 characters. The info could be split up over multiple DMs and/or I could return a shortened URL that you could follow to get to the original ADDS page.
+
