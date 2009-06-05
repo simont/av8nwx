@@ -1,0 +1,10 @@
+.svn
+*~
+.DS_Store
+doc/api
+doc/app
+tmp/[^.]*
+log/[^.]*
+config/database.yml
+config/settings.yml
+
