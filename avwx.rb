@@ -43,5 +43,5 @@ reply "getwx" do |message, params|
   puts "Got subscribe tweet: #{message}"
   
   client.friend(:add, message.user.screen_name)
-  client.message(:post, "Hi, AviationWX here! Send DM like: metar kord or taf klax to get METAR or TAFs", message.user.screen_name) 
+  client.message(:post, "Hi, av8nwx at your service! Send me DMs like: metar kord or taf klax to get METAR + TAF. PS: Experimental WX, dont rely on this!", message.user.screen_name) 
 end
