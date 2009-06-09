@@ -6,9 +6,9 @@ require 'open-uri'
 # Set up the configuration from the file
 bot = Twibot::Bot.new(Twibot::Config.default << Twibot::CliConfig.new)
 
-# adds METAR URL:
-adds_metar = "http://adds.aviationweather.gov/metars/index.php?submit=1&station_ids="
-adds_taf = "http://adds.aviationweather.noaa.gov/tafs/index.php?station_ids="
+# TODO - Check for valid stations, degrade to look for three letter codes if not start with K?
+# TODO - Check for valid commands
+# TODO - Return helpful message if command or station not recognized
 
 def get_metar(doc)
   return doc.at("font").inner_html
@@ -19,6 +19,7 @@ def get_taf(doc)
 end
 
 def process_metar_message(message, params)
+  adds_metar = "http://adds.aviationweather.gov/metars/index.php?submit=1&station_ids="
   puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
   metar_url = "#{adds_metar}#{params[:station]}"
   puts "fetching #{metar_url}"
@@ -27,7 +28,8 @@ def process_metar_message(message, params)
 end
 
 def process_taf_message(message, params)
-  puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
+   adds_taf = "http://adds.aviationweather.noaa.gov/tafs/index.php?station_ids="
+   puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
    taf_url = "#{adds_taf}#{params[:station]}"
    puts "fetching #{taf_url}"
    doc = Hpricot(open(taf_url))
@@ -42,7 +44,7 @@ end
 
 message "m :station" do |message, params|
   process_metar_message(message, params)
-process_metar_message
+end
 
 # Receive messages, if they match a TAF request then get the TAF and return it
 message "taf :station" do |message, params|
