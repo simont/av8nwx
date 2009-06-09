@@ -18,26 +18,43 @@ def get_taf(doc)
   return doc.at("pre").inner_html
 end
 
-# Receive messages, if they match a METAR request then get the METAR and return it
-message "metar :station" do |message, params|
+def process_metar_message(message, params)
   puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
   metar_url = "#{adds_metar}#{params[:station]}"
   puts "fetching #{metar_url}"
   doc = Hpricot(open(metar_url))
-  
-  client.message(:post, get_metar(doc), message.sender.screen_name) 
+  client.message(:post, get_metar(doc), message.sender.screen_name)
 end
+
+def process_taf_message(message, params)
+  puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
+   taf_url = "#{adds_taf}#{params[:station]}"
+   puts "fetching #{taf_url}"
+   doc = Hpricot(open(taf_url))
+   client.message(:post, get_taf(doc), message.sender.screen_name)
+end
+
+
+# Receive messages, if they match a METAR request then get the METAR and return it
+message "metar :station" do |message, params|
+  process_metar_message(message, params)
+end
+
+message "m :station" do |message, params|
+  process_metar_message(message, params)
+process_metar_message
 
 # Receive messages, if they match a TAF request then get the TAF and return it
 message "taf :station" do |message, params|
-  puts "DM: #{message} info: #{message.sender.screen_name} station: #{params[:station]}"
-  taf_url = "#{adds_taf}#{params[:station]}"
-  puts "fetching #{taf_url}"
-  doc = Hpricot(open(taf_url))
-  
-  client.message(:post, get_taf(doc), message.sender.screen_name) 
+ process_taf_message(message, params)
 end
 
+message "t :station" do |message, params|
+ process_taf_message(message, params)
+end
+
+
+# Check for people trying to subscribe to the service
 reply "getwx" do |message, params|
   # if they want to subscribe
   puts "Got subscribe tweet: #{message}"
